@@ -20,6 +20,6 @@ def timing(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         duration = (end_time - start_time)
-        print(f"'{func.__name__}' function executed in {duration:.5f} seconds.")
+        print(f"INFO : '{func.__name__}' function executed in {duration:.5f} seconds.")
         return result
     return wrapper
