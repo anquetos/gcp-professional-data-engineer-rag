@@ -17,6 +17,7 @@ nvidia-nvjitlink-cu12==12.4.127
 nvidia-nvtx-cu12==12.4.127
 pandas==2.2.3
 pdfplumber==0.11.4
+pyyaml==6.0.2
 sentence-transformers==3.3.1
 torch==2.5.1
 transformers==4.46.3
