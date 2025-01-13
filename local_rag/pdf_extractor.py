@@ -14,7 +14,7 @@ class PDFExtractor:
         page_offset: int = 0,
         first_page_number: int = 1,
         last_page_number: int = None,
-    ) -> list[dict[int, pdfplumber.page.Page]]:
+    ) -> list[dict[int: pdfplumber.page.Page]]:
         """
         Extracts and filters pages from a PDF file.
 
