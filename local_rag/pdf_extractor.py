@@ -1,57 +1,59 @@
 from pathlib import Path
-from typing import Dict
 
 import pdfplumber
-from pdfplumber.page import Page
+import pdfplumber.page
 
 
 class PDFExtractor:
     def __init__(self, path: Path):
-        self.path = path
+        self.pdf_path = path
+        self.pdf_pages = None
 
-    def open_document(self) -> bool:
-        if not self.path:
-            return False
-
-        with pdfplumber.open(self.path) as pdf:
-            self.pdf = pdf
-            return True
-
-    def close_document(self) -> bool:
-        if self.pdf is not None:
-            self.pdf.close()
-            self.pdf = None
-            return True
-        print("PDF is already closed.")
-        return False
-
-    def get_pages(
+    def extract_and_filter_pages(
         self,
-        first_page_offset: int = 0,
-        start_page_number: int = 1,
-        end_page_number: int = None,
-    ) -> Dict[int, Page]:
-        if not self.pdf:
-            raise ValueError("PDF document is not opened.")
+        page_offset: int = 0,
+        first_page_number: int = 1,
+        last_page_number: int = None,
+    ) -> list[dict[int, pdfplumber.page.Page]]:
+        """
+        Extracts and filters pages from a PDF file.
 
-        total_pages = len(self.pdf.pages)
-        if not end_page_number:
-            end_page_number = total_pages
+        Args:
+            page_offset (int, optional): The offset to apply to the page numbers. Defaults to 0.
+            first_page_number (int, optional): The first page number to include. Defaults to 1.
+            last_page_number (int, optional): The last page number to include. Defaults to None.
 
-        page_range = range(start_page_number, end_page_number + 1)
+        Raises:
+            TypeError: If the provided 'pdf_path' is not a Pathlib object.
+            FileNotFoundError: If the file at 'pdf_path' does not exist.
 
-        pdf_pages = []
-        for page_idx, page in enumerate(self.pdf.pages):
-            page_number = page_idx - first_page_offset + 1
-            if page_number in page_range:
-                pdf_pages.append({page_number: page})
+        Returns:
+            list[dict[int, pdfplumber.page.Page]]: A list of dictionaries where the key is the page number and the value
+            is the pdfplumber Page object.
+        """
 
-        self.pdf_pages = pdf_pages
+        if not isinstance(self.pdf_path, Path):
+            raise TypeError("The provided 'pdf_path' is not a Pathlib object")
+
+        if not self.pdf_path.exists():
+            raise FileNotFoundError(f"The file at '{self.pdf_path}' does not exist.")
+
+        with pdfplumber.open(self.pdf_path) as pdf:
+            self.pdf_pages = pdf.pages
+
+            if not last_page_number:
+                last_page_number = len(self.pdf_pages)
+            page_range = range(first_page_number, last_page_number + 1)
+
+            assert last_page_number > first_page_number, (
+                "The number of the last page cannot be less than or equal to the number of the first page."
+            )
+
+            pdf_pages = []
+            for page_idx, page in enumerate(self.pdf_pages):
+                page_number = page_idx - page_offset + 1
+                if page_number in page_range:
+                    pdf_pages.append({page_number: page})
+            self.pdf_pages = pdf_pages
 
         return self.pdf_pages
-
-
-    # TODO : Add method to filter the extracted lines on their font for each page.
-    # TODO : Add method for removing hyphens.
-    # TODO : Add method to format text.
-    # TODO : Add method to create a list of dictionnaries with the relevant pages.
