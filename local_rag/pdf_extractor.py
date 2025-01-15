@@ -186,24 +186,3 @@ class PDFExtractor:
         )
 
         return " ".join(formatted_text)
-
-
-if __name__ == "__main__":
-    pdf_filepath = Path(__file__).resolve().parent.parent / "pdf/source.pdf"
-
-    fontnames = [
-        "GHSRZR+SabonLTStd-Roman",
-        "GHSRZR+SourceCodePro-Regular",
-        "GHSRZR+SabonLTStd-Bold",
-        "GHSRZR+SabonLTStd-Italic",
-        "URTXBU+SourceCodePro-Bold",
-    ]
-
-    extractor = PDFExtractor(pdf_filepath)
-    # extractor.reorder_pages(page_offset=-40)
-    # extractor.filter_pages_range()
-    # extractor.extract_pages_text_by_font(fontnames)
-
-    # print(extractor.pages_text[0])
-
-    extractor.unload_file()
