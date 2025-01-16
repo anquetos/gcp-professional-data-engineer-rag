@@ -7,6 +7,7 @@ Classes:
     The text can be further processed to remove hyphens, reorder pages, and extract text by specific fonts.
 """
 
+import json
 import logging
 import re
 from pathlib import Path
@@ -103,16 +104,17 @@ class PDFExtractor:
             fontnames (list[str]): A list of font names to filter text by.
 
         Raises:
-            ValueError: A list of dictionaries containing page numbers and their extracted text.
+            ValueError: If no pages are available to extract text from.
 
         Returns:
-            List[Dict[str, str]]: If no pages are available to extract text from.
+            List[Dict[str, str]]: A list of dictionaries containing page numbers and their extracted text.
         """
         if not self.pdf_pages:
             logger.error("No pages to extract text from.")
             raise ValueError("No pages to extract text from.")
-        filtered_lines = []
+
         for page in self.pdf_pages:
+            filtered_lines = []
             lines = page["page_object"].extract_text_lines(
                 return_chars=True, keep_blank_chars=True
             )
@@ -186,3 +188,32 @@ class PDFExtractor:
         )
 
         return " ".join(formatted_text)
+
+    def export_pages_text_to_json(
+        self, filepath: Path, force_overwrite: bool = False
+    ) -> None:
+        """Exports the pages text to a JSON file.
+
+        Args:
+            filepath (Path): The file path to save the pages text.
+            force_overwrite (bool, optional): Whether to overwrite existing file. Defaults to False.
+
+        Raises:
+            ValueError: If there are no pages text to export.
+        """
+        logger.info("Starting export of pages text to JSON...")
+        if not self.pages_text:
+            logger.error(
+                "No pages to export. Did you run 'extract_pages_text_by_font()' method ?"
+            )
+            raise ValueError(
+                "No pages to export. Did you run 'extract_pages_text_by_font()' method ?"
+            )
+        if not filepath.is_file() or force_overwrite:
+            with open(filepath, "w") as f:
+                json.dump(self.pages_text, f, indent=2)
+            logger.info(f"Text pages exported to {filepath}.")
+        else:
+            logger.info(
+                "Text pages already exist. If you want to overwrite it, turn 'force_overwrite' to 'True'."
+            )
