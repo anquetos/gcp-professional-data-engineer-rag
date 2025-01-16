@@ -22,7 +22,9 @@ logger = logging.getLogger(__name__)
 
 
 class TextEmbedder:
-    def __init__(self, text: List[Dict[str, Any]], model_name: str = "all-mpnet-base-v2"):
+    def __init__(
+        self, text: List[Dict[str, Any]], model_name: str = "all-mpnet-base-v2"
+    ):
         """Initializes the TextEmbedder class.
 
         Args:
@@ -112,7 +114,9 @@ class TextEmbedder:
         logger.info("Embedding calculation completed successfully.")
         return self.embeddings
 
-    def export_embeddings_to_json(self, filepath: Path, force_overwrite: bool = False) -> None:
+    def export_embeddings_to_json(
+        self, filepath: Path, force_overwrite: bool = False
+    ) -> None:
         """Exports the embeddings to a JSON file.
 
         Args:
