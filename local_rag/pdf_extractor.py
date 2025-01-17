@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import pdfplumber
+from tqdm import tqdm
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -112,27 +113,30 @@ class PDFExtractor:
         if not self.pdf_pages:
             logger.error("No pages to extract text from.")
             raise ValueError("No pages to extract text from.")
-
-        for page in self.pdf_pages:
-            filtered_lines = []
-            lines = page["page_object"].extract_text_lines(
-                return_chars=True, keep_blank_chars=True
-            )
-            for line in lines:
-                line_char = [
-                    char["text"]
-                    for char in line["chars"]
-                    if char.get("fontname") in fontnames
-                ]
-                line_text = "".join(line_char)
-                filtered_lines.append(line_text)
-            text = "\n".join(filtered_lines).rstrip()
-            text = self._remove_hyphens(text)
-            text = self._basic_text_formatter(text)
-            if text:
-                self.pages_text.append(
-                    {"page_number": page["page_number"], "page_text": text}
+        
+        logger.info("Starting extracting text from pages...")
+        with tqdm(total=len(self.pdf_pages), desc="Extracting pages text") as pbar:
+            for page in self.pdf_pages:
+                filtered_lines = []
+                lines = page["page_object"].extract_text_lines(
+                    return_chars=True, keep_blank_chars=True
                 )
+                for line in lines:
+                    line_char = [
+                        char["text"]
+                        for char in line["chars"]
+                        if char.get("fontname") in fontnames
+                    ]
+                    line_text = "".join(line_char)
+                    filtered_lines.append(line_text)
+                text = "\n".join(filtered_lines).rstrip()
+                text = self._remove_hyphens(text)
+                text = self._basic_text_formatter(text)
+                if text:
+                    self.pages_text.append(
+                        {"page_number": page["page_number"], "page_text": text}
+                    )
+                pbar.update(1)
         logger.info("Extracted text from pages by font.")
         return self.pages_text
 
