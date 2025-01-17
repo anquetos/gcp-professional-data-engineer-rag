@@ -70,7 +70,8 @@ class TextEmbedder:
             for page in self.text:
                 page["page_chunks"] = text_splitter.split_text(text=page["page_text"])
                 page["page_chunks_max_tokens_count"] = max(
-                    text_splitter.count_tokens(text=chunk) for chunk in page["page_chunks"]
+                    text_splitter.count_tokens(text=chunk)
+                    for chunk in page["page_chunks"]
                 )
                 page["page_chunks_count"] = len(page["page_chunks"])
                 pbar.update(1)
