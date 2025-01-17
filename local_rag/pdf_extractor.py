@@ -113,7 +113,7 @@ class PDFExtractor:
         if not self.pdf_pages:
             logger.error("No pages to extract text from.")
             raise ValueError("No pages to extract text from.")
-        
+
         logger.info("Starting extracting text from pages...")
         with tqdm(total=len(self.pdf_pages), desc="Extracting pages text") as pbar:
             for page in self.pdf_pages:
