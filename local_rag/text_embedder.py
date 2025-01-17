@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 import torch
 from langchain.text_splitter import SentenceTransformersTokenTextSplitter
 from sentence_transformers import SentenceTransformer
+from tqdm import tqdm
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -65,13 +66,14 @@ class TextEmbedder:
             chunk_overlap=chunk_overlap,
             model_name=self.model_name,
         )
-
-        for page in self.text:
-            page["page_chunks"] = text_splitter.split_text(text=page["page_text"])
-            page["page_chunks_max_tokens_count"] = max(
-                text_splitter.count_tokens(text=chunk) for chunk in page["page_chunks"]
-            )
-            page["page_chunks_count"] = len(page["page_chunks"])
+        with tqdm(total=len(self.text), desc="Chunking text") as pbar:
+            for page in self.text:
+                page["page_chunks"] = text_splitter.split_text(text=page["page_text"])
+                page["page_chunks_max_tokens_count"] = max(
+                    text_splitter.count_tokens(text=chunk) for chunk in page["page_chunks"]
+                )
+                page["page_chunks_count"] = len(page["page_chunks"])
+                pbar.update(1)
 
         logger.info("Text chunking completed successfully.")
         return self.text
