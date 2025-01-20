@@ -1,15 +1,15 @@
 import json
 from pathlib import Path
 
-from text_preprocessing.pdf_extractor import PDFExtractor
-from text_preprocessing.text_embedder import TextEmbedder
+from pdf_extractor import PDFExtractor
+from text_embedder import TextEmbedder
 
-pdf_filepath = Path(__file__).resolve().parent.parent / "pdf/source.pdf"
+pdf_filepath = Path(__file__).cwd() / "pdf/source.pdf"
 pages_text_filepath = (
-    Path(__file__).resolve().parent.parent / "datasets/pages-text.json"
+    Path(__file__).resolve().cwd() / "datasets/pages-text.json"
 )
 embeddings_filepath = (
-    Path(__file__).resolve().parent.parent / "datasets/embeddings-overlap-50.json"
+    Path(__file__).resolve().cwd() / "datasets/embeddings-overlap-50.json"
 )
 
 fontnames = [
