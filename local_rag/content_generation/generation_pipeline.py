@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from text_retriever import TextRetriever
+from load_model import LoadModel
 
 
 # Set path
@@ -24,4 +25,6 @@ with open(embeddings_filepath, "r") as f:
 
 
 retriever = TextRetriever(embeddings=embeddings_data, source_document=pages_text_data)
-print(retriever.retrieve_relevant_sources(query="stream"))
+# print(retriever.retrieve_relevant_sources(query="build job"))
+
+model = LoadModel()
