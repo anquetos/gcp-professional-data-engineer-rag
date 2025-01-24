@@ -6,8 +6,10 @@ Classes:
     TextRetriever: A class to load text data, calculate embeddings, and retrieve relevant sources based on similarity scores.
 """
 
+import json
 import logging
-from typing import Any, Dict, List, Union
+from pathlib import Path
+from typing import Dict, List, Union
 
 import torch
 from sentence_transformers import SentenceTransformer, util
@@ -21,15 +23,47 @@ logger = logging.getLogger(__name__)
 class TextRetriever:
     def __init__(
         self,
-        embeddings: List[Dict[str, Any]],
-        source_document: List[Dict[str, Any]],
+        pages_text_filepath: Union[str, Path],
+        embeddings_filepath: Union[str, Path],
         model_name: str = "all-mpnet-base-v2",
     ):
-        self.embeddings = embeddings
-        self.source_document = source_document
+        self.pages_text_filepath = Path(pages_text_filepath)
+        self.embeddings_filepath = Path(embeddings_filepath)
+        self._load_pages_text_data()
+        self._load_embeddings_data()
         self._initialize_tensor()
         self._set_device()
         self.model_name = model_name
+        self.embedding_model = SentenceTransformer(model_name_or_path=self.model_name)
+
+    def _load_pages_text_data(self) -> None:
+        """Loads pages text data (extrated from the source document) from a JSON file.
+
+        Raises:
+            ValueError: If the loaded pages text is empty or not a list.
+        """
+        with open(self.pages_text_filepath, "r") as f:
+            self.pages_text = json.load(f)
+
+        if not self.pages_text or not isinstance(self.pages_text, list):
+            raise ValueError("Pages text must be a non-empty list.")
+
+        logger.info("Pages text data loaded successfully.")
+
+    def _load_embeddings_data(self) -> None:
+        """Loads embeddings data from a JSON file.
+
+        Raises:
+            ValueError: If the loaded embeddings are empty or not a list.
+        """
+        with open(self.embeddings_filepath, "r") as f:
+            self.embeddings = json.load(f)
+
+        # Input validation
+        if not self.embeddings or not isinstance(self.embeddings, list):
+            raise ValueError("Embeddings must be a non-empty list.")
+
+        logger.info("Embeddings data loaded successfully.")
 
     def _initialize_tensor(self) -> None:
         """Initializes the tensor from embeddings.
@@ -78,9 +112,7 @@ class TextRetriever:
             logger.error("k must be a positive integer.")
             raise ValueError("k must be a positive integer.")
 
-        embedding_model = SentenceTransformer(model_name_or_path=self.model_name)
-
-        query_embedding = embedding_model.encode(
+        query_embedding = self.embedding_model.encode(
             sentences=query,
             batch_size=32,
             device=self.device,
@@ -117,7 +149,7 @@ class TextRetriever:
             source_id = int(self.embeddings[idx.item()]["id"])
             source_text = next(
                 page["page_text"]
-                for page in self.source_document
+                for page in self.pages_text
                 if page["page_number"] == source_id
             )
             self.retrieved_sources["outputs"].append(
@@ -128,4 +160,5 @@ class TextRetriever:
                 }
             )
 
+        logger.info("Sources successfully retrieved.")
         return self.retrieved_sources
