@@ -40,8 +40,13 @@ class TextRetriever:
         """Loads pages text data (extrated from the source document) from a JSON file.
 
         Raises:
+            FileNotFoundError: If the pages text file does not exists.
             ValueError: If the loaded pages text is empty or not a list.
         """
+        if not self.pages_text_filepath.is_file():
+            logger.error(f"Pages text file not found: '{self.pages_text_filepath}'.")
+            raise FileNotFoundError(f"Pages text file does not exist: '{self.pages_text_filepath}'.")
+
         with open(self.pages_text_filepath, "r") as f:
             self.pages_text = json.load(f)
 
@@ -54,8 +59,13 @@ class TextRetriever:
         """Loads embeddings data from a JSON file.
 
         Raises:
+            FileNotFoundError: If the embeddings file does not exists.
             ValueError: If the loaded embeddings are empty or not a list.
         """
+        if not self.embeddings_filepath.is_file():
+            logger.error(f"Embeddings file not found: '{self.embeddings_filepath}'.")
+            raise FileNotFoundError(f"Embeddings file does not exist: '{self.embeddings_filepath}'.")
+
         with open(self.embeddings_filepath, "r") as f:
             self.embeddings = json.load(f)
 
