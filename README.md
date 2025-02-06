@@ -9,5 +9,5 @@ Various topics will be covered on the journey to build this RAG like :
 * creating custom prompt templates ;
 * building a user interface.
 
-> [NOTE!]  
+> **Note**  
 > &#x1F64F; This project won't have been possible without the great video tutorial ([Local Retrieval Augmented Generation (RAG) from Scratch](#https://youtu.be/qN_2fnOPY-M?si=9dsfcNGMjgQhF8Bs)) from [Daniel Bourke](#https://www.mrdbourke.com/).
