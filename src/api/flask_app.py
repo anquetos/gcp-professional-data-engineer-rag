@@ -13,9 +13,9 @@ app = Flask(__name__)
 
 # Set path
 pages_text_filepath = Path(__file__).cwd() / "datasets/pages-text.json"
-embeddings_filepath = Path(__file__).cwd() / "datasets/embeddings-overlap-50.json"
+embeddings_filepath = Path(__file__).cwd() / "datasets/embeddings-overlap-100.json"
 prompt_template_test_filepath = (
-    Path(__file__).cwd() / "templates/prompt_template_test.yaml"
+    Path(__file__).cwd() / "templates/generate_exam_question.yaml"
 )
 
 # Initialize retriever
@@ -52,7 +52,7 @@ def query_model():
     )
     tokenized_prompt = model.tokenizer(prompt, return_tensors="pt").to("cuda")
     generated_output = model.model.generate(
-        **tokenized_prompt, max_new_tokens=256, temperature=0.3, do_sample=True
+        **tokenized_prompt, max_new_tokens=512, temperature=0.6, do_sample=True
     )
     decoded_output = model.tokenizer.decode(
         generated_output[0], skip_special_tokens=True
