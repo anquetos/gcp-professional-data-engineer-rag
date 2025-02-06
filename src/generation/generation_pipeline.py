@@ -6,9 +6,9 @@ from text_retriever import TextRetriever
 
 # Set path
 pages_text_filepath = Path(__file__).cwd() / "datasets/pages-text.json"
-embeddings_filepath = Path(__file__).cwd() / "datasets/embeddings-overlap-50.json"
+embeddings_filepath = Path(__file__).cwd() / "datasets/embeddings-overlap-100.json"
 prompt_template_test_filepath = (
-    Path(__file__).cwd() / "templates/prompt_template_test.yaml"
+    Path(__file__).cwd() / "templates/generate_exam_question.yaml"
 )
 
 
@@ -45,7 +45,7 @@ def main(query: str):
 
     # Generate model output
     generated_output = model.model.generate(
-        **tokenized_prompt, max_new_tokens=256, temperature=0.3, do_sample=True
+        **tokenized_prompt, max_new_tokens=512, temperature=0.6, do_sample=True
     )
 
     # Decode the model output
@@ -59,4 +59,4 @@ def main(query: str):
 
 
 if __name__ == "__main__":
-    main(query="What is GCP ?")
+    main(query="Monitoring the data lake when storing the data.")
