@@ -90,17 +90,32 @@ prompt:
 
     ## Output format
 
-    Question must be a multiple choices question. Your output must always be structured in a Python dictionnary with the following keys
-    - question : "The question here"
-    - choices : Insert a list of the four possible options like this ["A. First option", "B. Second option", "C. Third option", "D. Fourth option"]
-    - right_answer : "The right option for the answer to select among the list of choices"
-    - comment: Insert a list explaining why each option is correct or not with a consise explanation.
-   
+    Question must be a multiple choices question. Your output must only be structured in a Python dictionnary with below keys. Do not add newline caracters. Surround your block code with three backticks with Python language specifier.
+    
+    ```python
+    Opening brace
+      "question": "The question here",
+      "choices": [
+        "Insert first option here.",
+        "Insert second option here.",
+        "Insert third option here.",
+        "Insert fourth option here.""
+      ],
+      "right_answer": "Insert the right option for the answer to select among the list of choices.",
+      "comment": [
+        "Insert here why first option is correct or not with a concise explanation.",
+        "Insert here why second option is correct or not with a concise explanation.",
+        "Insert here why third option is correct or not with a concise explanation.",
+        "Insert here why fourth option is correct or not with a concise explanation.",
+      ]
+    Closing brace
+    ```
+
     # Generation
 
-    Based on all those information and context, generate a question.
-    For generated this question, try to imagine various situation which could exist in real life and in different fields (industry, health, buidlings, etc.) which you will specify in your question.
-    Answer only with a valid Python dictionnary.
+    Based on all those information and context, generate a question for the user who is now a Data Engineer.
+    When generating this question, try to imagine various situation which could exist in real life and in different fields (industry, health, buidlings, etc.) which you will specify in your question.
+    Answer only with a valid Python dictionnary and always stick to the output format.
   variables:
     query: The user query
     context: The context items
